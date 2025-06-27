@@ -1,13 +1,3 @@
-<template>
-  <div class="space">
-    <canvas ref="canvas"></canvas>
-    <div class="info">
-      Расстояние: {{ Math.round(distance) }} | Размер:
-      {{ Math.round(planetSize) }}%
-    </div>
-  </div>
-</template>
-
 <script>
 import { ref, onMounted } from "vue";
 import * as BABYLON from "@babylonjs/core";
@@ -19,12 +9,10 @@ export default {
     const planetSize = ref(100);
 
     onMounted(() => {
-      // 1. Настраиваем сцену
       const engine = new BABYLON.Engine(canvas.value, true);
       const scene = new BABYLON.Scene(engine);
       scene.clearColor = new BABYLON.Color3(0.02, 0.02, 0.1); // Тёмный фон
 
-      // 2. Добавляем камеру (как наши глаза)
       const camera = new BABYLON.ArcRotateCamera(
         "camera",
         Math.PI / 2,
@@ -34,9 +22,7 @@ export default {
         scene
       );
       camera.attachControl(canvas.value, true);
-      camera.wheelPrecision = 50; // Чувствительность колесика мыши
 
-      // 3. Добавляем свет
       const light = new BABYLON.HemisphericLight(
         "light",
         new BABYLON.Vector3(0, 1, 0),
@@ -44,7 +30,6 @@ export default {
       );
       light.intensity = 0.7;
 
-      // 4. Создаём звёзды (500 белых точек)
       for (let i = 0; i < 500; i++) {
         const star = BABYLON.MeshBuilder.CreateSphere(
           `star-${i}`,
@@ -69,7 +54,6 @@ export default {
         star.material = starMaterial;
       }
 
-      // 5. Создаём планету
       const planet = BABYLON.MeshBuilder.CreateSphere(
         "planet",
         {
@@ -86,31 +70,26 @@ export default {
       planetMaterial.diffuseColor = new BABYLON.Color3(0.3, 0.5, 0.9); // Синий цвет
       planet.material = planetMaterial;
 
-      // 6. Анимация и масштабирование
       scene.registerBeforeRender(() => {
         // Вращение по X и Y
-        planet.rotation.x += 0.005; // Наклон
-        planet.rotation.y += 0.01; // Вращение
+        planet.rotation.x += 0.005;
+        planet.rotation.y += 0.01;
 
-        // Расстояние до планеты
         distance.value = BABYLON.Vector3.Distance(
           camera.position,
           planet.position
         );
 
-        // Уменьшение размера при отдалении (от 100% до 10%)
-        const maxDistance = 20; // 10 диаметров планеты
+        const maxDistance = 20;
         const scale = Math.max(0.1, 1 - distance.value / maxDistance);
         planetSize.value = scale * 100;
         planet.scaling.setAll(scale);
       });
 
-      // 7. Запускаем анимацию
       engine.runRenderLoop(() => {
         scene.render();
       });
 
-      // 8. Подстраиваемся под размер окна
       window.addEventListener("resize", () => {
         engine.resize();
       });
@@ -120,6 +99,16 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="space">
+    <canvas ref="canvas"></canvas>
+    <div class="info">
+      Расстояние: {{ Math.round(distance) }} | Размер:
+      {{ Math.round(planetSize) }}%
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .space {

@@ -1,10 +1,10 @@
+<script setup>
+import PlanetScene from "@/components/PlanetScene.vue";
+</script>
+
 <template>
   <PlanetScene />
 </template>
-
-<script lang="ts" setup>
-import PlanetScene from "./components/PlanetScene.vue";
-</script>
 
 <style>
 body {
@@ -12,4 +12,3 @@ body {
   padding: 0;
 }
 </style>
-s
